@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Yearly Calendar</title>
+  <title>Yearly Calendar (1900–3000)</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,6 +12,21 @@
     h1 {
       text-align: center;
       margin-bottom: 20px;
+    }
+    .controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .controls input {
+      width: 100px;
+      padding: 5px;
+      font-size: 16px;
+    }
+    .controls button {
+      padding: 6px 12px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
     }
     .calendar {
       display: grid;
@@ -52,6 +67,12 @@
 </head>
 <body>
   <h1 id="year-title"></h1>
+  <div class="controls">
+    <button onclick="changeYear(-1)">◀ Previous</button>
+    <input type="number" id="year-input" min="1900" max="3000" value="">
+    <button onclick="updateCalendar()">Go</button>
+    <button onclick="changeYear(1)">Next ▶</button>
+  </div>
   <div class="calendar" id="calendar"></div>
 
   <script>
@@ -103,6 +124,7 @@
 
     function printYear(year) {
       document.getElementById("year-title").textContent = `Calendar for ${year}`;
+      document.getElementById("year-input").value = year;
       const calendarDiv = document.getElementById("calendar");
       calendarDiv.innerHTML = "";
       for (let month = 1; month <= 12; month++) {
@@ -110,7 +132,23 @@
       }
     }
 
-    // Example: Show current year
+    function updateCalendar() {
+      const year = parseInt(document.getElementById("year-input").value);
+      if (!isNaN(year) && year >= 1900 && year <= 3000) {
+        printYear(year);
+      } else {
+        alert("Please enter a year between 1900 and 3000.");
+      }
+    }
+
+    function changeYear(offset) {
+      let year = parseInt(document.getElementById("year-input").value) + offset;
+      if (year < 1900) year = 1900;
+      if (year > 3000) year = 3000;
+      printYear(year);
+    }
+
+    // Show current year by default
     const currentYear = new Date().getFullYear();
     printYear(currentYear);
   </script>
