@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Yearly Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .month {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .month h2 {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 18px;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    th {
+      background: #0077cc;
+      color: white;
+      padding: 5px;
+    }
+    td {
+      padding: 5px;
+      height: 30px;
+    }
+    td.empty {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="year-title"></h1>
+  <div class="calendar" id="calendar"></div>
+
+  <script>
+    function isLeap(year) {
+      return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+    }
+
+    function daysInMonth(year, month) {
+      if (month === 2) return isLeap(year) ? 29 : 28;
+      if ([4, 6, 9, 11].includes(month)) return 30;
+      return 31;
+    }
+
+    function monthStartDay(year, month) {
+      if (month < 3) {
+        month += 12;
+        year -= 1;
+      }
+      const q = 1;
+      const m = month;
+      const k = year % 100;
+      const j = Math.floor(year / 100);
+      const h = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) + 5 * j) % 7;
+      return (h + 6) % 7; // 0 = Sunday
+    }
+
+    function printMonth(year, month) {
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      const startDay = monthStartDay(year, month);
+      const days = daysInMonth(year, month);
+
+      let html = `<div class="month"><h2>${monthNames[month-1]}</h2><table>`;
+      html += "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>";
+
+      for (let i = 0; i < startDay; i++) {
+        html += `<td class="empty"></td>`;
+      }
+
+      for (let day = 1; day <= days; day++) {
+        html += `<td>${day}</td>`;
+        if ((startDay + day) % 7 === 0 && day !== days) {
+          html += "</tr><tr>";
+        }
+      }
+
+      html += "</tr></table></div>";
+      return html;
+    }
+
+    function printYear(year) {
+      document.getElementById("year-title").textContent = `Calendar for ${year}`;
+      const calendarDiv = document.getElementById("calendar");
+      calendarDiv.innerHTML = "";
+      for (let month = 1; month <= 12; month++) {
+        calendarDiv.innerHTML += printMonth(year, month);
+      }
+    }
+
+    // Example: Show current year
+    const currentYear = new Date().getFullYear();
+    printYear(currentYear);
+  </script>
+</body>
+</html>
